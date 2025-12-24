@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>C-Form Search Portal</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script src="data.js"></script>
+
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background:#f4f6f9;
+  margin:0;
+  padding:20px;
+}
+h1 {
+  text-align:center;
+  margin-bottom:10px;
+}
+.filters {
+  display:grid;
+  grid-template-columns: repeat(auto-fit,minmax(150px,1fr));
+  gap:10px;
+  margin-bottom:15px;
+}
+input {
+  padding:10px;
+  border:1px solid #ccc;
+  border-radius:6px;
+  font-size:14px;
+}
+table {
+  width:100%;
+  border-collapse:collapse;
+  background:white;
+}
+th, td {
+  padding:8px;
+  border:1px solid #ddd;
+  font-size:13px;
+}
+th {
+  background:#0b3d91;
+  color:white;
+  position:sticky;
+  top:0;
+}
+tr:hover {
+  background:#f1f7ff;
+}
+.count {
+  margin-bottom:10px;
+  font-weight:bold;
+}
+</style>
+</head>
+
+<body>
+
+<h1>🔍 C-Form Live Search</h1>
+
+<div class="filters">
+  <input id="fName" placeholder="Search Name">
+  <input id="fTIN" placeholder="Purchaser TIN">
+  <input id="fSerial" placeholder="Serial No">
+  <input id="fDate" placeholder="Date (YYYY-MM-DD)">
+</div>
+
+<div class="count" id="countBox"></div>
+
+<table>
+  <thead>
+    <tr>
+      <th>Sr</th>
+      <th>Purchaser TIN</th>
+      <th>CST</th>
+      <th>Name</th>
+      <th>Series</th>
+      <th>Serial</th>
+      <th>Date</th>
+    </tr>
+  </thead>
+  <tbody id="tableBody"></tbody>
+</table>
+
+<script>
+const tbody = document.getElementById("tableBody");
+const countBox = document.getElementById("countBox");
+
+function render(data){
+  tbody.innerHTML="";
+  data.forEach(d=>{
+    tbody.innerHTML += `
+      <tr>
+        <td>${d.sr}</td>
+        <td>${d.purchaserTIN}</td>
+        <td>${d.purchaserCST}</td>
+        <td>${d.name}</td>
+        <td>${d.series}</td>
+        <td>${d.serial}</td>
+        <td>${d.date}</td>
+      </tr>
+    `;
+  });
+  countBox.innerText = "Total Records: " + data.length;
+}
+
+render(masterData);
+
+document.querySelectorAll("input").forEach(i=>{
+  i.addEventListener("input", filterData);
+});
+
+function filterData(){
+  const name = fName.value.toLowerCase();
+  const tin = fTIN.value.toLowerCase();
+  const serial = fSerial.value.toLowerCase();
+  const date = fDate.value;
+
+  const filtered = masterData.filter(d=>{
+    return (
+      d.name.toLowerCase().includes(name) &&
+      d.purchaserTIN.includes(tin) &&
+      d.serial.includes(serial) &&
+      d.date.includes(date)
+    );
+  });
+
+  render(filtered);
+}
+</script>
+
+</body>
+</html>
